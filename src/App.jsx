@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AddTask from "./components/AddTask";
 import Tasks from "./components/Tasks";
 import { v4 } from "uuid";
+import { use } from "react";
 
 function App() {
   //STATE (estado) - usar em alguma interação do usuário para mudar algo na tela
@@ -13,6 +14,25 @@ function App() {
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
+  //Essa função só usado uma vez quando o componente for montado
+  useEffect(() => {
+    async function fetchTasks() {
+      //Chamar a API
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/todos?_limit=10",
+        {
+          method: "GET",
+        }
+      );
+
+      //Pegar os dados que ela retorna
+      const data = await response.json();
+      //Armazenar esses dados no estado (state do React)
+      setTasks(data);
+    }
+    // Se quiser você pode chamar uma api diferente para pegar as tarefas iniciais
+    // fetchTasks();
+  }, []);
 
   function onTaskClick(tasksId) {
     const newTasks = tasks.map((task) => {
